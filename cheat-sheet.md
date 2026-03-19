@@ -287,4 +287,119 @@ fgets(nombre, sizeof(nombre), stdin);  // incluye \n al final
 
 ---
 
+## 9. Sistema binario
+
+### Concepto
+Los bits son interruptores — `0 = apagado`, `1 = encendido`. Cada operación bit a bit actúa sobre cada interruptor de forma independiente.
+
+### Decimal → Binario
+Divide entre 2 y lee los restos **de abajo a arriba**:
+
+```
+6 ÷ 2 = 3  resto 0
+3 ÷ 2 = 1  resto 1
+1 ÷ 2 = 0  resto 1
+            ↑ leer de abajo a arriba → 110 = 6
+```
+
+```
+13 ÷ 2 = 6  resto 1
+ 6 ÷ 2 = 3  resto 0
+ 3 ÷ 2 = 1  resto 1
+ 1 ÷ 2 = 0  resto 1
+             ↑ leer de abajo a arriba → 1101 = 13
+```
+
+### Binario → Decimal
+Cada posición vale una potencia de 2 empezando por la derecha:
+
+```
+1  1  0  1
+↑  ↑  ↑  ↑
+8  4  2  1   →   8 + 4 + 0 + 1 = 13
+```
+
+### Tabla de referencia
+
+| Decimal | Binario | | Decimal | Binario |
+|---------|---------|---|---------|---------|
+| 0 | 0000 | | 8 | 1000 |
+| 1 | 0001 | | 9 | 1001 |
+| 2 | 0010 | | 10 | 1010 |
+| 3 | 0011 | | 11 | 1011 |
+| 4 | 0100 | | 12 | 1100 |
+| 5 | 0101 | | 13 | 1101 |
+| 6 | 0110 | | 14 | 1110 |
+| 7 | 0111 | | 15 | 1111 |
+
+### Potencias de 2 — truco rápido
+Las potencias de 2 tienen un solo `1` y el resto `0`:
+```
+2⁰ =   1 → 00000001
+2¹ =   2 → 00000010
+2² =   4 → 00000100
+2³ =   8 → 00001000
+2⁴ =  16 → 00010000
+2⁵ =  32 → 00100000
+2⁶ =  64 → 01000000
+2⁷ = 128 → 10000000
+```
+
+---
+
+## 10. Operadores bit a bit — usos prácticos
+
+| Operador | Nombre | Uso típico |
+|----------|--------|------------|
+| `\|` | OR | **Activar bits** — añadir permisos o estados |
+| `&` | AND | **Comprobar/filtrar bits** — verificar permisos |
+| `^` | XOR | **Alternar bits** — cifrado, toggles |
+| `~` | NOT | **Invertir bits** — quitar permisos |
+| `<<` | Desplazamiento izq. | Multiplicar por 2 rápido |
+| `>>` | Desplazamiento der. | Dividir por 2 rápido |
+
+### Ejemplos prácticos
+
+**Activar un bit con OR:**
+```c
+int estado = 0b0000;
+estado = estado | 0b0100;   // activa el bit 2 → 0100
+```
+
+**Comprobar un bit con AND:**
+```c
+if (estado & 0b0100) { /* el bit 2 está activo */ }
+```
+
+**Alternar un bit con XOR:**
+```c
+estado = estado ^ 0b0100;   // si estaba a 1 → 0, si estaba a 0 → 1
+```
+
+**Desactivar un bit con AND + NOT:**
+```c
+estado = estado & ~0b0100;  // apaga el bit 2, deja el resto igual
+```
+
+**Desplazamiento — multiplicar/dividir por 2:**
+```c
+int x = 4;        // 0100
+x = x << 1;       // 1000 = 8  (× 2)
+x = x >> 1;       // 0100 = 4  (÷ 2)
+```
+
+### Ejemplo real — sistema de permisos
+```c
+#define LEER     0b100   // 4
+#define ESCRIBIR 0b010   // 2
+#define EJECUTAR 0b001   // 1
+
+int permisos = LEER | ESCRIBIR;    // 110 = 6  → "rw-"
+
+if (permisos & LEER) { ... }       // ¿puede leer?
+permisos = permisos & ~ESCRIBIR;   // quitar escritura
+```
+
+---
+
 *Programación en C — Bloques 1, 2, 3 · Referencia personal*
