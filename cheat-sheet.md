@@ -37,6 +37,19 @@ gcc -Wall -Wextra -std=c11 -g programa.c -o programa
 
 > ✅ Usa `const` en lugar de `#define` para definir constantes con tipo: `const float PI = 3.14159f;`
 
+**`const char *` — puntero a string de solo lectura:**
+```c
+const char *mensaje  = "Hola";      // ✅ string literal — siempre con const
+const char *resultado = (x > 0) ? "Positivo" : "Negativo";  // ✅ ternario
+
+// El puntero puede cambiar a qué apunta, pero no el contenido
+mensaje = "Adios";      // ✅ puede redirigir
+mensaje[0] = 'h';       // ❌ error — no puedes modificar el texto
+
+// Sin const también compila, pero es incorrecto:
+char *mensaje = "Hola"; // ⚠️ sin const — el compilador puede avisar
+```
+
 ---
 
 ## 3. Especificadores de formato (printf / scanf)
@@ -98,6 +111,21 @@ gcc -Wall -Wextra -std=c11 -g programa.c -o programa
 !(4 > 3)   // 4>3 es verdadero → 1, luego !1 → 0
 ```
 
+**Short-circuit evaluation — evaluación en cortocircuito:**
+```c
+// Con ||: si el primero es true, el segundo NO se evalúa
+true  || cualquier_cosa   // → siempre true, el segundo se ignora
+
+// Con &&: si el primero es false, el segundo NO se evalúa
+false && cualquier_cosa   // → siempre false, el segundo se ignora
+```
+
+```c
+// Ejemplo práctico
+tiene_contrato || salario > 2000   // si tiene_contrato=1, no evalúa salario
+edad > 18      && tiene_dni        // si edad<=18, no evalúa tiene_dni
+```
+
 ### 4.4 Asignación compuesta
 
 | Op. | Equivalente a | Ejemplo (x=10) |
@@ -129,6 +157,15 @@ gcc -Wall -Wextra -std=c11 -g programa.c -o programa
 | `~` | NOT bit a bit | Invierte todos los bits |
 | `<<` | Desplazamiento izquierda | Multiplica por 2^n |
 | `>>` | Desplazamiento derecha | Divide por 2^n |
+
+**Truco para `~a` — fórmula rápida:**
+```c
+~a = -(a + 1)
+~12 = -13
+~0  = -1
+~1  = -2
+// ~ invierte los 32 bits → el bit más significativo pasa a 1 → resultado negativo
+```
 
 **Tabla XOR:**
 
@@ -215,6 +252,7 @@ Sintaxis: `printf("formato", arg1, arg2, ...);`
 | `%5d` | Ancho mínimo 5 (alineado derecha) | `printf("%5d", 42)` | `   42` |
 | `%-5d` | Alineado izquierda | `printf("%-5d\|", 42)` | `42   \|` |
 | `%05d` | Relleno con ceros | `printf("%05d", 42)` | `00042` |
+| `%02d` | Ancho 2, relleno con ceros | `printf("%02d", 5)` | `05` |
 | `%+d` | Muestra signo siempre | `printf("%+d", 42)` | `+42` |
 | `%.2f` | 2 decimales | `printf("%.2f", 3.14159)` | `3.14` |
 | `%8.2f` | Ancho 8, 2 decimales | `printf("%8.2f", 3.14)` | `    3.14` |
